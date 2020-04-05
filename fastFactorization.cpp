@@ -10,10 +10,28 @@ typedef pair<int,int> iipair;
 typedef pair<unsigned,unsigned> uupair;
 typedef vector<int> vec;
 typedef vector<unsigned> uvec;
-
+typedef vector<ll> llvec;
 const unsigned LIMIT=1e3;
 
 uvec sp(LIMIT+1,0);
+
+llvec pf(ll n)
+{
+    // show(n);
+    llvec res;
+    for(ll i=2;i*i<=n;++i)
+    {
+        while(n%i == 0)
+        {
+            // show(i);
+            res.push_back(i);
+            n/=i;
+        }
+    }
+    if(n>1)
+        res.push_back(n);
+    return res;
+}
 
 void preComputation()
 {
@@ -81,14 +99,9 @@ int main()
     unsigned n;
     cin>>n;
     uvec a=getPrimeFactors(n);
-    /* show(n);
-    show(a.size()); */
-    while(n != 1)
-    {
-        cout<<sp[n]<<" ";
-        n/=sp[n];
-    }
-    cout<<endl;
     for(auto x : a) cout<<x<<" ";
+    cout<<endl;
+    llvec another=pf(n);
+    for(auto x : another) cout<<x<<" ";
     cout<<endl;
 }
