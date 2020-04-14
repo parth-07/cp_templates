@@ -25,7 +25,7 @@ public:
     typedef vector<T> stvec;
     typedef vector<stvec> stgrid;
     typedef function<T(T, T)> stfun;
-    unsigned SBE_p2=24;
+    unsigned SBE_p2=24; //Should be enough , p2 = power of 2
     stvec lg,p2;
     stvec a;
     stgrid st;
@@ -68,7 +68,7 @@ void SparseTable<T>::preCompute()
 
     for (unsigned j = 1; j <= k; ++j)
     {
-        for (unsigned i = 0; i + (1 << j) - 1 < sz; ++i)
+        for (unsigned i = 0; i + p2[j] - 1 < sz; ++i)
         {
             if(a[st[i][j-1]] < a[st[i+p2[j-1]][j-1]])
                 st[i][j]=st[i][j-1];
@@ -119,7 +119,7 @@ public:
     vector<Node<T>> tree;
     vector<unsigned> euler_walk,euler_lca_walk;
     vector<unsigned> euler_start, euler_finish,euler_lca_start,euler_lca_depth;
-    
+
     int root;
     SparseTable<unsigned> sparse_lca;
     bool basicStatus=0;
@@ -129,7 +129,8 @@ public:
     void addDirectedEdge(int u, int v, int weight); //edge from u to v
 
     void dfsDisplay(int bud = -1, int par = -1);
-    void calBasicPropertiesDfs(int bud = -1, int par = -1); //properties like depth, parent
+    void calBasicProperties(int bud=-1,int par=-1);
+    void basicPropertiesDfs(int bud = -1, int par = -1); //properties like depth, parent
     void bfsDisplay(int bud = -1);
 
     void buildEulerWalkPathQueries(int bud = -1, int par = -1);
@@ -138,6 +139,9 @@ public:
     void prepareLCA();
     void buildEulerWalkLCA(int bud=-1,int par=-1);
     unsigned lca(int ,int );
+
+    unsigned size();
+
     Node<T> &operator[](const unsigned index)
     {
         return tree[index];
@@ -147,6 +151,19 @@ public:
         return tree[index];
     }
 };
+
+template<typename T>
+void Tree<T>::calBasicProperties(int bud,int par)
+{
+    basicStatus=1;
+    basicPropertiesDfs(bud,par);
+}
+
+template<typename T>
+unsigned Tree<T>::size()
+{
+    return tree.size();
+}
 
 template <typename T>
 Tree<T>::Tree(unsigned n, int r) : root(r)
@@ -168,7 +185,7 @@ void Tree<T>::addDirectedEdge(int u, int v, int weight)
 }
 
 template <typename T>
-void Tree<T>::calBasicPropertiesDfs(int bud, int par)
+void Tree<T>::basicPropertiesDfs(int bud, int par)
 {
     if (bud == -1)
     {
@@ -187,7 +204,7 @@ void Tree<T>::calBasicPropertiesDfs(int bud, int par)
     {
         if (x.first == par)
             continue;
-        calBasicPropertiesDfs(x.first, bud);
+        basicPropertiesDfs(x.first, bud);
     }
 }
 template <typename T>
@@ -261,6 +278,8 @@ void Tree<T>::eulerWalk(int bud, int par)
 template<typename T>
 void Tree<T>::prepareLCA()
 {
+    if(!basicStatus)
+        calBasicProperties();
     euler_lca_start.resize(tree.size());
     euler_lca_walk.clear();
     euler_lca_depth.clear();
@@ -316,16 +335,16 @@ int main()
     // tree.dfsDisplay();
     // cout<<endl;
     // tree.bfsDisplay();
-    tree.calBasicPropertiesDfs();
+    tree.basicPropertiesDfs();
     tree.prepareLCA();
     
-    // for(unsigned i=0;i<n;++i)
-    // {
-    //     show(i);
-    //     cout<<"value : "<<tree[i].value<<endl;
-    //     cout<<"depth : "<<tree[i].depth<<endl;
-    //     cout<<"parent : "<<tree[i].parent+1<<endl; 
-    // }
+    for(unsigned i=0;i<tree.size();++i)
+    {
+        show(i);
+        cout<<"value : "<<tree[i].value<<endl;
+        cout<<"depth : "<<tree[i].depth<<endl;
+        cout<<"parent : "<<tree[i].parent+1<<endl; 
+    }
     
 
     
