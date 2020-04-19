@@ -25,8 +25,8 @@ public:
     typedef vector<T> stvec;
     typedef vector<stvec> stgrid;
     typedef function<T(T, T)> stfun;
-    unsigned SBE_p2=24; //Should be enough , p2 = power of 2
-    stvec lg,p2;
+    unsigned SBE_p2 = 24; //Should be enough , p2 = power of 2
+    stvec lg, p2;
     stvec a;
     stgrid st;
     unsigned sz, k;
@@ -48,9 +48,10 @@ T SparseTable<T>::query(int l, int r)
     // show2(l,r);
     ll j = lg[r - l + 1];
     // show(j);
-    if(a[st[l][j]] < a[st[r-p2[j]+1][j]])
+    if (a[st[l][j]] < a[st[r - p2[j] + 1][j]])
         return st[l][j];
-    else return st[r-p2[j]+1][j];
+    else
+        return st[r - p2[j] + 1][j];
     // return f(st[l][j], st[r - (1 << j) + 1][j]);
 }
 
@@ -70,11 +71,11 @@ void SparseTable<T>::preCompute()
     {
         for (unsigned i = 0; i + p2[j] - 1 < sz; ++i)
         {
-            if(a[st[i][j-1]] < a[st[i+p2[j-1]][j-1]])
-                st[i][j]=st[i][j-1];
+            if (a[st[i][j - 1]] < a[st[i + p2[j - 1]][j - 1]])
+                st[i][j] = st[i][j - 1];
             else
             {
-                st[i][j]=st[i+p2[j-1]][j-1];
+                st[i][j] = st[i + p2[j - 1]][j - 1];
             }
             // show2(i,j);
             // show(st[i][j]);
@@ -89,25 +90,25 @@ void SparseTable<T>::preComputelg()
     lg[1] = 0;
     for (int i = 2; i <= sz; ++i)
         lg[i] = lg[i / 2] + 1;
-    p2.resize(SBE_p2+1);
-    p2[0]=1;
-    for(int i=1;i<=SBE_p2;++i)
-        p2[i]=(p2[i-1]<<1);
+    p2.resize(SBE_p2 + 1);
+    p2[0] = 1;
+    for (int i = 1; i <= SBE_p2; ++i)
+        p2[i] = (p2[i - 1] << 1);
 }
-
-template <typename T>
-class Node
-{
-public:
-    T value;
-    iimap edges;
-    int parent, depth;
-    Node() {}
-};
 
 template <typename T> //type of weight isnt as in template parameter now;
 class Tree
 {
+private:
+    class Node
+    {
+    public:
+        T value;
+        iimap edges;
+        int parent, depth;
+        Node() {}
+    };
+
 public:
     enum Color
     {
@@ -115,21 +116,21 @@ public:
         GREY,
         BLACK
     };
-    
-    vector<Node<T>> tree;
-    vector<unsigned> euler_walk,euler_lca_walk;
-    vector<unsigned> euler_start, euler_finish,euler_lca_start,euler_lca_depth;
+
+    vector<Node> tree;
+    vector<unsigned> euler_walk, euler_lca_walk;
+    vector<unsigned> euler_start, euler_finish, euler_lca_start, euler_lca_depth;
 
     int root;
     SparseTable<unsigned> sparse_lca;
-    bool basicStatus=0;
+    bool basicStatus = 0;
     Tree(unsigned n, int r = 0);
 
     void addUndirectedEdge(int u, int v, int weight = 1);
     void addDirectedEdge(int u, int v, int weight); //edge from u to v
 
     void dfsDisplay(int bud = -1, int par = -1);
-    void calBasicProperties(int bud=-1,int par=-1);
+    void calBasicProperties(int bud = -1, int par = -1);
     void basicPropertiesDfs(int bud = -1, int par = -1); //properties like depth, parent
     void bfsDisplay(int bud = -1);
 
@@ -137,29 +138,29 @@ public:
     void eulerWalk(int bud = -1, int par = -1);
 
     void prepareLCA();
-    void buildEulerWalkLCA(int bud=-1,int par=-1);
-    unsigned lca(int ,int );
+    void buildEulerWalkLCA(int bud = -1, int par = -1);
+    unsigned lca(int, int);
 
     unsigned size();
 
-    Node<T> &operator[](const unsigned index)
+    Node &operator[](const unsigned index)
     {
         return tree[index];
     }
-    const Node<T> &operator[](const unsigned index) const
+    const Node &operator[](const unsigned index) const
     {
         return tree[index];
     }
 };
 
-template<typename T>
-void Tree<T>::calBasicProperties(int bud,int par)
+template <typename T>
+void Tree<T>::calBasicProperties(int bud, int par)
 {
-    basicStatus=1;
-    basicPropertiesDfs(bud,par);
+    basicStatus = 1;
+    basicPropertiesDfs(bud, par);
 }
 
-template<typename T>
+template <typename T>
 unsigned Tree<T>::size()
 {
     return tree.size();
@@ -191,16 +192,17 @@ void Tree<T>::basicPropertiesDfs(int bud, int par)
     {
         bud = par = root;
     }
-    tree[bud].parent = par;
+    Node &a = tree[bud];
+    a.parent = par;
     if (bud == par)
     {
-        tree[bud].depth = 0;
+        a.depth = 0;
     }
     else
     {
-        tree[bud].depth = tree[tree[bud].parent].depth + 1;
+        a.depth = tree[a.parent].depth + 1;
     }
-    for (auto x : tree[bud].edges)
+    for (auto x : a.edges)
     {
         if (x.first == par)
             continue;
@@ -275,45 +277,45 @@ void Tree<T>::eulerWalk(int bud, int par)
     euler_walk.push_back(bud);
 }
 
-template<typename T>
+template <typename T>
 void Tree<T>::prepareLCA()
 {
-    if(!basicStatus)
+    if (!basicStatus)
         calBasicProperties();
     euler_lca_start.resize(tree.size());
     euler_lca_walk.clear();
     euler_lca_depth.clear();
     buildEulerWalkLCA();
-    for(auto x : euler_lca_walk)
+    for (auto x : euler_lca_walk)
         euler_lca_depth.push_back(tree[x].depth);
-    sparse_lca=SparseTable<unsigned>(euler_lca_depth);
+    sparse_lca = SparseTable<unsigned>(euler_lca_depth);
 }
 
-template<typename T>
-void Tree<T>::buildEulerWalkLCA(int bud,int par)
+template <typename T>
+void Tree<T>::buildEulerWalkLCA(int bud, int par)
 {
-    if(bud==-1)
-        bud=par=root;
-    euler_lca_start[bud]=euler_lca_walk.size();
+    if (bud == -1)
+        bud = par = root;
+    euler_lca_start[bud] = euler_lca_walk.size();
     euler_lca_walk.push_back(bud);
-    for(auto x : tree[bud].edges)
+    for (auto x : tree[bud].edges)
     {
-        if(x.first == par)
+        if (x.first == par)
             continue;
-        buildEulerWalkLCA(x.first,bud);
+        buildEulerWalkLCA(x.first, bud);
         euler_lca_walk.push_back(bud);
     }
 }
 
-template<typename T>
-unsigned Tree<T>::lca(int u,int v)
+template <typename T>
+unsigned Tree<T>::lca(int u, int v)
 {
-    u=euler_lca_start[u];
-    v=euler_lca_start[v];
-    if(u>v)
-        swap(u,v);
+    u = euler_lca_start[u];
+    v = euler_lca_start[v];
+    if (u > v)
+        swap(u, v);
     // show2(u,v);
-    return euler_lca_walk[sparse_lca.query(u,v)];
+    return euler_lca_walk[sparse_lca.query(u, v)];
 }
 
 int main()
@@ -337,25 +339,23 @@ int main()
     // tree.bfsDisplay();
     tree.basicPropertiesDfs();
     tree.prepareLCA();
-    
-    for(unsigned i=0;i<tree.size();++i)
+
+    for (unsigned i = 0; i < tree.size(); ++i)
     {
         show(i);
-        cout<<"value : "<<tree[i].value<<endl;
-        cout<<"depth : "<<tree[i].depth<<endl;
-        cout<<"parent : "<<tree[i].parent+1<<endl; 
+        cout << "value : " << tree[i].value << endl;
+        cout << "depth : " << tree[i].depth << endl;
+        cout << "parent : " << tree[i].parent + 1 << endl;
     }
-    
 
-    
     unsigned q;
-    cin>>q;
-    while(q--)
+    cin >> q;
+    while (q--)
     {
-        int u,v;
-        cin>>u>>v;
+        int u, v;
+        cin >> u >> v;
         --u;
         --v;
-        cout<<tree.lca(u,v)+1<<endl;
+        cout << tree.lca(u, v) + 1 << endl;
     }
 }
