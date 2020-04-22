@@ -127,7 +127,7 @@ public:
     Tree(unsigned n, int r = 0);
 
     void addUndirectedEdge(int u, int v, int weight = 1);
-    void addDirectedEdge(int u, int v, int weight); //edge from u to v
+    void addDirectedEdge(int u, int v, int weight=1); //edge from u to v
 
     void dfsDisplay(int bud = -1, int par = -1);
     void calBasicProperties(int bud = -1, int par = -1);
@@ -217,7 +217,8 @@ void Tree<T>::dfsDisplay(int bud, int par)
         bud = par = root;
     }
     cout << bud << " ";
-    for (auto x : tree[bud].edges)
+    Node &u=tree[bud];
+    for (auto x : u.edges)
     {
         if (x.first == par)
             continue;

@@ -30,7 +30,7 @@ public:
     map<int,Element> dsforest; //map implementation for random node indices
     DisjointSetForest(unsigned);
 
-    void makeSet(int,const T& = T());
+    void makeSet(int,const T& = T{});
     int findSet(int );
     void joinSets(int,int);
     void link(int,int);
@@ -86,7 +86,7 @@ template <typename T>
 DisjointSetForest<T>::DisjointSetForest(unsigned n)
 {
     for(unsigned i=0;i<n;++i)
-        makeSet(i,i);
+        makeSet(i);
 }
 
 template <typename T>
