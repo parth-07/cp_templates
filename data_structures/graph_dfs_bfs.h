@@ -191,37 +191,37 @@ void Graph<T, EdgeValueT>::dfs(size_type source)
 }
 
 template <class T, class EdgeValueT>
-const typename Graph<T, EdgeValueT>::Node &Graph<T, EdgeValueT>::operator[](const size_type index)
+inline const typename Graph<T, EdgeValueT>::Node &Graph<T, EdgeValueT>::operator[](const size_type index)
 {
     return nodes[index];
 }
 
 template <class T, class EdgeValueT>
-const typename Graph<T, EdgeValueT>::Node &Graph<T, EdgeValueT>::operator[](const size_type index) const
+inline const typename Graph<T, EdgeValueT>::Node &Graph<T, EdgeValueT>::operator[](const size_type index) const
 {
     return nodes[index];
 }
 
 template <class T, class EdgeValueT>
-typename Graph<T, EdgeValueT>::const_iterator Graph<T, EdgeValueT>::cbegin() const
+inline typename Graph<T, EdgeValueT>::const_iterator Graph<T, EdgeValueT>::cbegin() const
 {
     return nodes.cbegin();
 }
 
 template <class T, class EdgeValueT>
-typename Graph<T, EdgeValueT>::const_iterator Graph<T, EdgeValueT>::cend() const
+inline typename Graph<T, EdgeValueT>::const_iterator Graph<T, EdgeValueT>::cend() const
 {
     return nodes.cend();
 }
 
 template <class T, class EdgeValueT>
-typename Graph<T, EdgeValueT>::iterator Graph<T, EdgeValueT>::begin()
+inline typename Graph<T, EdgeValueT>::iterator Graph<T, EdgeValueT>::begin()
 {
     return nodes.begin();
 }
 
 template <class T, class EdgeValueT>
-typename Graph<T, EdgeValueT>::iterator Graph<T, EdgeValueT>::end()
+inline typename Graph<T, EdgeValueT>::iterator Graph<T, EdgeValueT>::end()
 {
     return nodes.end();
 }
