@@ -7,7 +7,7 @@ struct dijkstra_node
 {
     size_type parent;
     EdgeValueT dist;
-
+    dijkstra_node(size_type __parent,EdgeValueT __dist) : parent(__parent) , dist(__dist) { };
 };
 
 template<typename T,typename EdgeValueT>
@@ -18,52 +18,46 @@ using dijkstra_vec = vector<dijkstra_node<T,EdgeValueT> >;
 template<class T,class EdgeValueT>
 auto dijkstra(const Graph<T,EdgeValueT> graph,typename Graph<T,EdgeValueT>::size_type source = Graph<T,EdgeValueT>::npos)
 {
-    uisng std::set;
+    using std::set;
     using std::pair;
     using ll = long long int;
-    using Graph<T,EdgeValueT>::size_type;
-    using Graph<T,EdgeValueT>::edge_value_type;
-    using Graph<T,EdgeValueT>::npos;
-    using Graph<T,EdgeValueT>::nweight;
+    using ds_graph = Graph<T,EdgeValueT>;
+    using ds_dnode = dijkstra_node<typename ds_graph::size_type,typename ds_graph::edge_value_type>;
+    using size_type = typename ds_graph::size_type;
+    using edge_value_type = typename ds_graph::edge_value_type;
     using ds_pair = pair<edge_value_type,size_type>;
-    using ds_set = set<d_pair>;
+    using ds_set = set<ds_pair>;
 
 
-    if(source == Graph<T,EdgeValueT>::npos)
+    if(source == ds_graph::npos)
         source = graph.root;
 
-    dijkstra_vec<size_type,edge_value_type> nodes_res;
+    dijkstra_vec<size_type,edge_value_type> nodes_res(graph.graph_order,ds_dnode(ds_graph::npos,ds_graph::nweight));
 
-    for(auto &item : nodes_res)
-    {
-        item.parent = npos;
-        item.dist = nweight;
-    }
-    
     nodes_res[source].parent = source;
     nodes_res[source].dist = 0;
 
     ds_set queue;
-    for(unsigned i=0;i<nodes_res)
+    for(unsigned i=0;i<graph.graph_order;++i)
     {
         queue.insert({nodes_res[i].dist,i});
     }
 
     while(! queue.empty())
     {
-        ds_set::iterator iter = queue.begin();
+        typename ds_set::iterator iter = queue.begin();
         unsigned u_i = iter->second;
-        dijkstra_node &u = nodes_res[u_i];
+        ds_dnode &u = nodes_res[u_i];
         queue.erase(iter);
-        if(u.dist == nweight)
+        if(u.dist == ds_graph::nweight)
             break;
         for(auto edge : graph[u_i].edges)
         {
             edge_value_type temp_dist = u.dist + edge.second;
-            if(temp_dist < nodes_res[edge.first])
+            if(temp_dist < nodes_res[edge.first].dist)
             {
                 size_type v_i = edge.first;
-                dijkstra_node &v = nodes_res[v_i];
+                ds_dnode &v = nodes_res[v_i];
                 queue.erase({v.dist,v_i});
                 v.dist = temp_dist;
                 v.parent = u_i;
