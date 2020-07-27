@@ -48,6 +48,7 @@ public:
     using reverse_iterator = typename vector<Node>::reverse_iterator;
 
     constexpr static size_type npos = numeric_limits<size_type>::max();
+    constexpr static edge_value_type nweight = numeric_limits<edge_value_type>::max()/4;
 
     const Node &operator[](const size_type index) const;
     const Node &operator[](const size_type index);
@@ -77,6 +78,9 @@ public:
 
 template <class T, class EdgeValueT>
 constexpr typename Graph<T, EdgeValueT>::size_type Graph<T, EdgeValueT>::npos;
+
+template<class T,class EdgeValueT>
+constexpr typename Graph<T,EdgeValueT>::edge_value_type Graph<T,EdgeValueT>::nweight ;
 
 template <class T, class EdgeValue>
 Graph<T, EdgeValue>::Node::Node(T __value) : value(__value) {}

@@ -6,7 +6,10 @@ using namespace std;
 int main()
 {
     Graph<int> graph(9);
-    
+    for(unsigned i=0;i<9;++i)
+    {
+        graph.update_value(i,i);
+    }
     graph.add_undirected_edge(0,3);
     graph.add_undirected_edge(0,5);
     graph.add_undirected_edge(1,2);
@@ -23,5 +26,9 @@ int main()
     graph.bfs();
     cout<<endl;
     graph.dfs();
-
+    cout<<endl;
+    for(auto node : graph)
+    {
+        cout<<node.value<<" ";
+    }
 }
