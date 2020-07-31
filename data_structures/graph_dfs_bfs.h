@@ -3,12 +3,13 @@
 
 #include <bits/stdc++.h>
 
+using std::clog;
+using std::cout;
 using std::map;
 using std::numeric_limits;
 using std::queue;
 using std::stack;
 using std::vector;
-using std::clog;
 
 template <class T, class EdgeValueT = int>
 class Graph
@@ -20,51 +21,56 @@ public:
 
 private:
     using node_edges_type = map<size_type, EdgeValueT>;
+
+    size_type time = 0;
+
+public:
     enum Color
     {
         WHITE = 0,
         GREY,
         BLACK
     };
-
     class Node
     {
     public:
         T value;
         node_edges_type edges;
-        Color color;
+        Color color = WHITE;
         int distance;
         size_type parent;
-        size_type time_discovered, time_finished;
+        size_type t_in, t_out;
         Node(T = 0);
         Node(const Node &) = default;
     };
-    vector<Node> nodes;
 
 public:
+    vector<Node> nodes;
     using const_iterator = typename vector<Node>::const_iterator;
     using const_reverse_iterator = typename vector<Node>::const_reverse_iterator;
     using iterator = typename vector<Node>::iterator;
     using reverse_iterator = typename vector<Node>::reverse_iterator;
 
     constexpr static size_type npos = numeric_limits<size_type>::max();
-    constexpr static edge_value_type nweight = numeric_limits<edge_value_type>::max()/4;
+    constexpr static edge_value_type nweight = numeric_limits<edge_value_type>::max() / 4;
 
     const Node &operator[](const size_type index) const;
-    const Node &operator[](const size_type index);
+    Node &operator[](const size_type index);
 
     size_type root;
     size_type graph_order;
 
-    Graph(size_type __graph_order = 0,size_type __root = 0);
+    Graph(size_type __graph_order = 0, size_type __root = 0);
     Graph(const Graph &) = default;
 
-    void build(size_type __n , size_type __root = 0);
+    void build(size_type __n, size_type __root = 0);
     void update_value(size_type index, value_type val);
     void add_directed_edge(size_type u_i, size_type v_i, EdgeValueT = 1);
     void add_undirected_edge(size_type u_i, size_type v_i, EdgeValueT = 1);
     void bfs(size_type = npos);
-    void dfs(size_type = npos);
+    void dfs(size_type = npos, bool all_nodes = false);
+    void dfs_base(size_type souce);
+    void reset_color();
 
     iterator begin();
     iterator end();
@@ -79,21 +85,21 @@ public:
 template <class T, class EdgeValueT>
 constexpr typename Graph<T, EdgeValueT>::size_type Graph<T, EdgeValueT>::npos;
 
-template<class T,class EdgeValueT>
-constexpr typename Graph<T,EdgeValueT>::edge_value_type Graph<T,EdgeValueT>::nweight ;
+template <class T, class EdgeValueT>
+constexpr typename Graph<T, EdgeValueT>::edge_value_type Graph<T, EdgeValueT>::nweight;
 
 template <class T, class EdgeValue>
 Graph<T, EdgeValue>::Node::Node(T __value) : value(__value) {}
 
 template <class T, class EdgeValueT>
-inline Graph<T, EdgeValueT>::Graph(size_type __graph_order,size_type __root) : graph_order(__graph_order) , root(__root)
+inline Graph<T, EdgeValueT>::Graph(size_type __graph_order, size_type __root) : graph_order(__graph_order), root(__root)
 {
     if (__graph_order)
-        build(__graph_order,__root);
+        build(__graph_order, __root);
 }
 
 template <class T, class EdgeValueT>
-inline void Graph<T, EdgeValueT>::build(size_type __graph_order,size_type __root)
+inline void Graph<T, EdgeValueT>::build(size_type __graph_order, size_type __root)
 {
     nodes.clear();
     nodes.resize(__graph_order);
@@ -159,7 +165,7 @@ void Graph<T, EdgeValueT>::bfs(size_type source)
 }
 
 template <class T, class EdgeValueT>
-void Graph<T, EdgeValueT>::dfs(size_type source)
+void Graph<T, EdgeValueT>::dfs(size_type source, bool all_nodes)
 {
     if (source == npos)
         source = root;
@@ -168,34 +174,52 @@ void Graph<T, EdgeValueT>::dfs(size_type source)
         u.color = WHITE;
         u.parent = npos;
     }
-    size_type time = 0;
-    stack<size_type> node_stack;
+    time = 0;
     nodes[source].parent = source;
-    nodes[source].color = GREY;
-    node_stack.push(source);
-    while (!node_stack.empty())
+    dfs_base(source);
+    if (all_nodes)
     {
-        size_type u_i = node_stack.top();
-        Node &u = nodes[u_i];
-        node_stack.pop();
-        clog<<u_i<<" ";
-        for (auto edge : u.edges)
+        for (size_type u_i = 0; u_i < nodes.size(); ++u_i)
         {
-            size_type v_i = edge.first;
-            Node &v = nodes[v_i];
-            if (v.color == WHITE)
-            {
-                v.parent = u_i;
-                v.color = GREY;
-                node_stack.push(v_i);
-            }
+            Node &u = nodes[u_i];
+            if (u.color == WHITE)
+                dfs_base(u_i);
         }
-        u.color = BLACK;
     }
+}
+template <class T, class EdgeValueT>
+void Graph<T, EdgeValueT>::dfs_base(size_type source)
+{
+    size_type u_i = source;
+    Node &u = nodes[u_i];
+    u.color = GREY;
+    time++;
+    u.t_in = time;
+    cout << u_i << " ";
+    for (auto edge : u.edges)
+    {
+        size_type v_i = edge.first;
+        Node &v = nodes[v_i];
+        if (v.color == WHITE)
+        {
+            v.parent = u_i;
+            dfs_base(v_i);
+        }
+    }
+    u.color = BLACK;
+    time++;
+    u.t_out = time;
 }
 
 template <class T, class EdgeValueT>
-inline const typename Graph<T, EdgeValueT>::Node &Graph<T, EdgeValueT>::operator[](const size_type index)
+void Graph<T, EdgeValueT>::reset_color()
+{
+    for (auto &node : nodes)
+        node.color = WHITE;
+}
+
+template <class T, class EdgeValueT>
+inline typename Graph<T, EdgeValueT>::Node &Graph<T, EdgeValueT>::operator[](const size_type index)
 {
     return nodes[index];
 }
