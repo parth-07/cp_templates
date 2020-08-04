@@ -33,7 +33,7 @@ private:
         T value;
         node_edges edges;
         size_type parent, depth;
-        Color color;
+        Color color = WHITE;
         Node(T __value = 0) : value(__value) {}
         Node(const Node &) = default;
     };
@@ -42,12 +42,14 @@ public:
     vector<Node> nodes;
     const size_type root;
     Tree(size_type sz = 0, size_type __root = 0);
+    Tree(const Tree&) = default;
     void add_directed_edge(const size_type u_i, const size_type v_i, edge_value_type weight = 1);
     void add_undirected_edge(const size_type u_i, const size_type v_i, edge_value_type weight = 1);
     void dfs(size_type bud = npos, size_type parent = npos);
     void bfs(size_type bud = npos);
     Node& operator[](const size_type);
     const Node& operator[](const size_type) const;
+    void reset_colors();
 };
 
 template <class T, class EdgeValueT>
@@ -128,6 +130,13 @@ template<class T,class EdgeValueT>
 inline const typename Tree<T,EdgeValueT>::Node& Tree<T,EdgeValueT>::operator[](const size_type index) const
 {
     return nodes[index];
+}
+
+template<class T,class EdgeValueT>
+inline void Tree<T,EdgeValueT>::reset_colors()
+{
+    for(auto node : nodes)
+        node.color = WHITE;
 }
 
 #endif
