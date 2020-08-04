@@ -23,4 +23,6 @@ int main()
 	show(dsu.in_same_set(1,2));
 	show(dsu.in_same_set(1,3));
 	show(dsu.in_same_set(4,7));
+	show(dsu.in_same_set(5,6));
+	show(dsu.in_same_set(5,2));
 }
