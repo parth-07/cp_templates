@@ -21,8 +21,8 @@ public:
 
 private:
     using node_edges_type = map<size_type, EdgeValueT>;
-
     size_type time = 0;
+    void build(size_type __n, size_type __root = 0);
 
 public:
     enum Color
@@ -57,13 +57,12 @@ public:
     const Node &operator[](const size_type index) const;
     Node &operator[](const size_type index);
 
-    size_type root;
-    size_type graph_order;
+    const size_type root;
+    const size_type graph_order;
 
     Graph(size_type __graph_order = 0, size_type __root = 0);
     Graph(const Graph &) = default;
 
-    void build(size_type __n, size_type __root = 0);
     void update_value(size_type index, value_type val);
     void add_directed_edge(size_type u_i, size_type v_i, EdgeValueT = 1);
     void add_undirected_edge(size_type u_i, size_type v_i, EdgeValueT = 1);
@@ -103,8 +102,8 @@ inline void Graph<T, EdgeValueT>::build(size_type __graph_order, size_type __roo
 {
     nodes.clear();
     nodes.resize(__graph_order);
-    graph_order = __graph_order;
-    root = __root;
+    // graph_order = __graph_order;
+    // root = __root;
 }
 
 template <class T, class EdgeValueT>
