@@ -46,6 +46,8 @@ public:
     void add_undirected_edge(const size_type u_i, const size_type v_i, edge_value_type weight = 1);
     void dfs(size_type bud = npos, size_type parent = npos);
     void bfs(size_type bud = npos);
+    Node& operator[](const size_type);
+    const Node& operator[](const size_type) const;
 };
 
 template <class T, class EdgeValueT>
@@ -114,6 +116,18 @@ void Tree<T,EdgeValueT>::bfs(size_type bud)
         }
         u.color = BLACK;
     }
+}
+
+template<class T,class EdgeValueT>
+inline typename Tree<T,EdgeValueT>::Node& Tree<T,EdgeValueT>::operator[](const size_type index)
+{
+    return nodes[index];
+}
+
+template<class T,class EdgeValueT>
+inline const typename Tree<T,EdgeValueT>::Node& Tree<T,EdgeValueT>::operator[](const size_type index) const
+{
+    return nodes[index];
 }
 
 #endif
