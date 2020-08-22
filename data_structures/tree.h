@@ -135,7 +135,7 @@ inline const typename Tree<T,EdgeValueT>::Node& Tree<T,EdgeValueT>::operator[](c
 template<class T,class EdgeValueT>
 inline void Tree<T,EdgeValueT>::reset_colors()
 {
-    for(auto node : nodes)
+    for(auto &node : nodes)
         node.color = WHITE;
 }
 
